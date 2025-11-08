@@ -2,10 +2,6 @@ import { UserModel } from './user.model';
 import { IUser } from './user.interface';
 
 export const UserService = {
-  async createUser(data: IUser) {
-    return await UserModel.create(data);
-  },
-
   async getUserById(id: string) {
     return await UserModel.findById(id);
   },

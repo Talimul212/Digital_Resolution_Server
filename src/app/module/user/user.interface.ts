@@ -2,7 +2,7 @@ export type UserType =
   | 'client'
   | 'marketer'
   | 'web_developer'
-  | 'designer'
+  | 'graphic_designer'
   | 'video_editor'
   | 'admin';
 

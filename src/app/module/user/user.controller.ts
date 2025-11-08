@@ -2,11 +2,6 @@ import { Request, Response } from 'express';
 import { UserService } from './user.service';
 
 export const UserController = {
-  async create(req: Request, res: Response) {
-    const user = await UserService.createUser(req.body);
-    res.status(201).json(user);
-  },
-
   async getById(req: Request, res: Response) {
     const user = await UserService.getUserById(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found' });

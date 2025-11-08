@@ -2,10 +2,14 @@ import { UserModel } from '../user/user.model';
 import jwt from 'jsonwebtoken';
 import { TLoginUser } from './auth.interface';
 import config from '../../config';
+import { IUser } from '../user/user.interface';
 
 const JWT_SECRET = config.jwt_access_secret || 'your_jwt_secret';
 
 export const AuthService = {
+  async createUser(data: IUser) {
+    return await UserModel.create(data);
+  },
   async login({ email, password }: TLoginUser) {
     const user = await UserModel.findOne({ email });
     if (!user) throw new Error('User not found');
