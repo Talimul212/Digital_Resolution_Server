@@ -1,10 +1,5 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable prettier/prettier */
 import { Request, Response, NextFunction } from 'express';
-
 const globalErrorHandler = (
   err: any,
   req: Request,
