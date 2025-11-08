@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import { UserController } from './user.controller';
+import { UpdateUserSchema } from './user.validation';
+import validateRequest from '../../middlewares/validateRequest';
 
 const router = Router();
 
-router.post('/', UserController.create);
 router.get('/', UserController.getAll);
 router.get('/:id', UserController.getById);
-router.put('/:id', UserController.update);
+router.put('/:id', validateRequest(UpdateUserSchema), UserController.update);
 router.delete('/:id', UserController.delete);
 
 export default router;

@@ -1,6 +1,6 @@
-/* eslint-disable prettier/prettier */
 import { Router } from 'express';
 import UserRoutes from '../module/user/user.route';
+import AuthRoutes from '../module/auth/auth.route';
 
 interface IModuleRoute {
   path: string;
@@ -13,6 +13,10 @@ const moduleRoutes: IModuleRoute[] = [
   {
     path: '/users',
     route: UserRoutes,
+  },
+  {
+    path: '/auth',
+    route: AuthRoutes,
   },
 ];
 

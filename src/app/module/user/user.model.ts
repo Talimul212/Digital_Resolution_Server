@@ -8,7 +8,14 @@ const UserSchema = new Schema<IUser>(
     password: { type: String, required: true },
     userType: {
       type: String,
-      enum: ['client', 'employee', 'admin'],
+      enum: [
+        'client',
+        'marketer',
+        'web_developer',
+        'designer',
+        'video_editor',
+        'admin',
+      ],
       required: true,
     },
     createdBy: { type: String, default: null },

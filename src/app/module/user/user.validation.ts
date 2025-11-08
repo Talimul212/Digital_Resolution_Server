@@ -1,6 +1,13 @@
 import { z } from 'zod';
 
-export const UserTypeEnum = z.enum(['client', 'employee', 'admin']);
+export const UserTypeEnum = z.enum([
+  'client',
+  'marketer',
+  'web_developer',
+  'designer',
+  'video_editor',
+  'admin',
+]);
 
 export const CreateUserSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -16,9 +23,4 @@ export const UpdateUserSchema = z.object({
   password: z.string().min(6).optional(),
   userType: UserTypeEnum.optional(),
   createdBy: z.string().optional(),
-});
-
-export const LoginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
 });
