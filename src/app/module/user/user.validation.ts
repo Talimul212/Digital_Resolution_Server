@@ -7,6 +7,7 @@ export const UserTypeEnum = z.enum([
   'graphic_designer',
   'video_editor',
   'admin',
+  'team_lead',
 ]);
 
 export const CreateUserSchema = z.object({

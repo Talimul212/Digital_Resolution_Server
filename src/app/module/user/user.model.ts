@@ -9,12 +9,13 @@ const UserSchema = new Schema<IUser>(
     userType: {
       type: String,
       enum: [
-        'client',
+        'suber_admin',
         'marketer',
         'web_developer',
         'graphic_designer',
         'video_editor',
         'admin',
+        'team_lead',
       ],
       required: true,
     },

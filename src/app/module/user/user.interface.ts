@@ -1,10 +1,11 @@
 export type UserType =
-  | 'client'
+  | 'suber_admin'
   | 'marketer'
   | 'web_developer'
   | 'graphic_designer'
   | 'video_editor'
-  | 'admin';
+  | 'admin'
+  | 'team_lead';
 
 export interface IUser {
   id?: string;

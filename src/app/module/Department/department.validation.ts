@@ -6,6 +6,7 @@ const createDepartmentSchema = z.object({
     'Video Editing',
     'Marketing',
     'Web Development',
+    'Admin Services',
   ]),
   clientIds: z.array(z.string().min(1)).optional(),
   employeeIds: z.array(z.string().min(1)).optional(),
