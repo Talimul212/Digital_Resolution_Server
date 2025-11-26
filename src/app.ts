@@ -1,8 +1,7 @@
- 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import express, { Application } from 'express';
+import express, { Application, Request, Response } from 'express';
 import globalErrorHandler from './app/middlewares/globalErrorhandler';
 import notFound from './app/middlewares/notFound';
 import router from './app/routes';
@@ -17,7 +16,12 @@ app.use(cors({ origin: ['http://localhost:5173'] }));
 
 // application routes
 app.use('/api/v1', router);
-
+app.get('/', (req: Request, res: Response) => {
+  res.send({
+    status: true,
+    message: 'Server Live',
+  });
+});
 app.use(globalErrorHandler as any);
 
 //Not Found
