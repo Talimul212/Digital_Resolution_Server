@@ -16,6 +16,8 @@ app.use(cors({ origin: ['http://localhost:5173'] }));
 
 // application routes
 app.use('/api/v1', router);
+
+//server call
 app.get('/', (req: Request, res: Response) => {
   res.send({
     status: true,
