@@ -1,5 +1,5 @@
 export interface IClient {
-  name: string;
+  // Existing fields
   contractCount: number;
   designCount: number;
   videoCount: number;
@@ -12,4 +12,12 @@ export interface IClient {
   contractAmount: number;
   payAmount: number;
   dueAmount: number;
+
+  name: string;
+  location: string;
+  number: string;
+  gmail: string;
+  projectDetails: string;
+  status: 'ongoing' | 'completed';
+  logo: string;
 }

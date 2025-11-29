@@ -3,7 +3,7 @@ import { IClient } from './client.interface';
 
 const ClientSchema = new Schema<IClient>(
   {
-    name: { type: String, required: true },
+    // Existing fields
     contractCount: { type: Number, default: 0 },
     designCount: { type: Number, default: 0 },
     videoCount: { type: Number, default: 0 },
@@ -16,6 +16,19 @@ const ClientSchema = new Schema<IClient>(
     contractAmount: { type: Number, default: 0 },
     payAmount: { type: Number, default: 0 },
     dueAmount: { type: Number, default: 0 },
+
+    // New fields
+    name: { type: String, required: true },
+    location: { type: String, required: true },
+    number: { type: String, required: true },
+    gmail: { type: String, required: true },
+    projectDetails: { type: String, required: true },
+    status: {
+      type: String,
+      enum: ['ongoing', 'completed'],
+      default: 'ongoing',
+    },
+    logo: { type: String, required: true },
   },
   { timestamps: true },
 );

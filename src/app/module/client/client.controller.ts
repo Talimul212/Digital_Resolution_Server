@@ -3,6 +3,8 @@ import { ClientService } from './client.service';
 
 export const ClientController = {
   async create(req: Request, res: Response) {
+    console.log(req.body);
+
     const client = await ClientService.create(req.body);
     res.status(201).json({ success: true, data: client });
   },

@@ -3,8 +3,6 @@ import { EmployeeService } from './employee.service';
 
 export const EmployeeController = {
   async create(req: Request, res: Response) {
-    console.log(req.body);
-
     const employee = await EmployeeService.create(req.body);
     res.status(201).json({ success: true, data: employee });
   },
