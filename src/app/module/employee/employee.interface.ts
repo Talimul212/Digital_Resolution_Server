@@ -6,13 +6,6 @@ export type DepartmentType =
   | 'admin'
   | 'team_lead';
 
-export interface ITask {
-  companyName: string;
-  details: string;
-  hour: number;
-  status?: 'pending' | 'in_progress' | 'completed';
-}
-
 export interface IEmployee {
   companyID: string;
   name: string;
@@ -25,5 +18,4 @@ export interface IEmployee {
   photo: string;
   salary: string;
   joiningDate: Date;
-  task: ITask[];
 }

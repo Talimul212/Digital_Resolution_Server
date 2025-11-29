@@ -20,14 +20,5 @@ export const EmployeeValidation = {
     joiningDate: z.string().date('Joining date must be in YYYY-MM-DD format'),
     salary: z.string().min(1, 'Salary is required'),
     photo: z.string(),
-    task: z
-      .array(
-        z.object({
-          companyName: z.string().min(1, 'Company name is required'),
-          details: z.string().min(1, 'Task details are required'),
-          hour: z.number().min(0, 'Hour must be non-negative'),
-        }),
-      )
-      .optional(),
   }),
 };

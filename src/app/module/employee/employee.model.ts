@@ -1,15 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { IEmployee } from './employee.interface';
 
-const TaskSchema = new Schema(
-  {
-    companyName: { type: String, required: true },
-    details: { type: String, required: true },
-    hour: { type: Number, required: true },
-  },
-  { _id: false },
-);
-
 const EmployeeSchema = new Schema(
   {
     companyID: { type: String, required: true, unique: true },
@@ -21,7 +12,7 @@ const EmployeeSchema = new Schema(
     salary: { type: String, required: true },
     name: { type: String, required: true },
     designation: { type: String, required: true },
-    task: { type: [TaskSchema], default: [] },
+
     joiningDate: { type: Date, required: true },
     department: {
       type: String,

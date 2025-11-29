@@ -12,6 +12,7 @@ export interface IUser {
   name: string;
   email: string;
   password: string;
+  employeeId: string;
   userType: UserType;
   createdBy?: string; // Admin ID
 }

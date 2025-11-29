@@ -13,6 +13,7 @@ export const UserTypeEnum = z.enum([
 export const CreateUserSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email format'),
+  employeeId: z.string().min(1, 'Employee ID is required'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   userType: UserTypeEnum,
   createdBy: z.string().optional(),

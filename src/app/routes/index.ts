@@ -4,6 +4,7 @@ import AuthRoutes from '../module/auth/auth.route';
 import DepartmentRoutes from '../module/Department/department.route';
 import ClientRoutes from '../module/client/client.route';
 import EmployeeRoutes from '../module/employee/employee.route';
+import EmployeeTaskRoutes from '../module/EmployeeTask/EmployeeTask.route';
 interface IModuleRoute {
   path: string;
   route: Router;
@@ -31,6 +32,10 @@ const moduleRoutes: IModuleRoute[] = [
   {
     path: '/employees',
     route: EmployeeRoutes,
+  },
+  {
+    path: '/tasks',
+    route: EmployeeTaskRoutes,
   },
 ];
 
