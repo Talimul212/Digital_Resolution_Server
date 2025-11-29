@@ -11,8 +11,8 @@ router.post(
   EmployeeController.create,
 );
 router.get('/', EmployeeController.getAll);
-router.put('/:id/update', EmployeeController.update);
-router.delete('/:id/delete', EmployeeController.delete);
 router.get('/:id', EmployeeController.getById);
+router.put('/:id', EmployeeController.update);
+router.delete('/:id', EmployeeController.delete);
 
 export default router;

@@ -10,13 +10,20 @@ const TaskSchema = new Schema(
   { _id: false },
 );
 
-const EmployeeSchema = new Schema<IEmployee>(
+const EmployeeSchema = new Schema(
   {
+    companyID: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
+    number: { type: String, required: true },
+    address: { type: String, required: true },
+    nid: { type: String, required: true, unique: true },
+    photo: { type: String, required: true },
+    salary: { type: String, required: true },
     name: { type: String, required: true },
     designation: { type: String, required: true },
     task: { type: [TaskSchema], default: [] },
-    joinDate: { type: Date, required: true },
-    employeeType: {
+    joiningDate: { type: Date, required: true },
+    department: {
       type: String,
       enum: [
         'marketer',
