@@ -17,4 +17,8 @@ export const UserService = {
   async deleteUser(id: string) {
     return await UserModel.findByIdAndDelete(id);
   },
+
+  async getUserByEmployeeId(employeeId: string) {
+    return await UserModel.findOne({ employeeId });
+  },
 };

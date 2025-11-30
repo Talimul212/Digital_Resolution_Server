@@ -7,6 +7,9 @@ const router = Router();
 
 router.get('/', DepartmentController.getAll);
 router.get('/:id', DepartmentController.getById);
+
+router.get('/employees/:id', DepartmentController.getEmployees);
+
 router.post(
   '/create',
   validateRequest(DepartmentValidation.createDepartmentSchema),

@@ -21,6 +21,7 @@ export const DepartmentController = {
     const updated = await DepartmentService.update(req.params.id, req.body);
     res.status(200).json({ success: true, data: updated });
   },
+
   async delete(req: Request, res: Response) {
     const deleted = await DepartmentService.delete(req.params.id);
     if (!deleted) {
@@ -31,5 +32,26 @@ export const DepartmentController = {
     res
       .status(200)
       .json({ success: true, message: 'Department deleted successfully' });
+  },
+
+  async getEmployees(req: Request, res: Response) {
+    console.log(req.params);
+
+    try {
+      const employees = await DepartmentService.getEmployeesByDepartmentName(
+        req.params.id,
+      );
+      if (!employees) {
+        return res
+          .status(404)
+          .json({ success: false, message: 'Department not found' });
+      }
+      res.status(200).json({ success: true, data: employees });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: `Internal server error: ${(error as Error).message}`,
+      });
+    }
   },
 };

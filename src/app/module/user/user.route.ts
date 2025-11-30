@@ -7,6 +7,8 @@ const router = Router();
 
 router.get('/', UserController.getAll);
 router.get('/:id', UserController.getById);
+router.get('/by-employee/:employeeId', UserController.getByEmployeeId);
+
 router.put('/:id', validateRequest(UpdateUserSchema), UserController.update);
 router.delete('/:id', UserController.delete);
 

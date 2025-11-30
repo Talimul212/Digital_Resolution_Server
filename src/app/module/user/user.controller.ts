@@ -22,4 +22,22 @@ export const UserController = {
     await UserService.deleteUser(req.params.id);
     res.status(204).send();
   },
+
+  // 🔹 New controller: get user by employeeId
+  async getByEmployeeId(req: Request, res: Response) {
+    try {
+      const user = await UserService.getUserByEmployeeId(req.params.employeeId);
+      if (!user)
+        return res.status(404).json({
+          success: false,
+          message: 'User not found for this employee',
+        });
+      res.json({ success: true, data: user });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: `Internal server error: ${(error as Error).message}`,
+      });
+    }
+  },
 };
