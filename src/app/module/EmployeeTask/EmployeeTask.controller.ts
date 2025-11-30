@@ -13,22 +13,64 @@ export const TaskController = {
   },
 
   async getAll(req: Request, res: Response) {
-    const tasks = await TaskService.getTasks();
-    res.json({ success: true, data: tasks });
+    try {
+      const tasks = await TaskService.getTasks();
+      res.json({ success: true, data: tasks });
+    } catch (error) {
+      res.status(500).json({ success: false, message: (error as any).message });
+    }
   },
 
   async getOne(req: Request, res: Response) {
-    const task = await TaskService.getTaskById(req.params.id);
-    res.json({ success: true, data: task });
+    try {
+      const task = await TaskService.getTaskById(req.params.id);
+      if (!task) {
+        return res
+          .status(404)
+          .json({ success: false, message: 'Task not found' });
+      }
+      res.json({ success: true, data: task });
+    } catch (error) {
+      res.status(500).json({ success: false, message: (error as any).message });
+    }
+  },
+
+  // 🔑 NEW: Get tasks by employeeId
+  async getByEmployee(req: Request, res: Response) {
+    try {
+      const { employeeId } = req.params;
+      const tasks = await TaskService.getTasksByEmployeeId(employeeId);
+      res.json({ success: true, data: tasks });
+    } catch (error) {
+      res.status(500).json({ success: false, message: (error as any).message });
+    }
   },
 
   async update(req: Request, res: Response) {
-    const task = await TaskService.updateTask(req.params.id, req.body);
-    res.json({ success: true, data: task });
+    try {
+      const task = await TaskService.updateTask(req.params.id, req.body);
+      if (!task) {
+        return res
+          .status(404)
+          .json({ success: false, message: 'Task not found' });
+      }
+      res.json({ success: true, data: task });
+    } catch (error) {
+      res.status(500).json({ success: false, message: (error as any).message });
+    }
   },
 
   async delete(req: Request, res: Response) {
-    await TaskService.deleteTask(req.params.id);
-    res.json({ success: true, message: 'Task deleted' });
+    try {
+      const deleted = await TaskService.deleteTask(req.params.id);
+      if (!deleted) {
+        return res
+          .status(404)
+          .json({ success: false, message: 'Task not found' });
+      }
+      res.json({ success: true, message: 'Task deleted' });
+    } catch (error) {
+      res.status(500).json({ success: false, message: (error as any).message });
+    }
   },
 };

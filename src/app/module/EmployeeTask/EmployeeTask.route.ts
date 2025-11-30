@@ -7,7 +7,8 @@ const router = Router();
 
 router.post('/create', validateRequest(TaskZodSchema), TaskController.create);
 router.get('/', TaskController.getAll);
-router.get('/:id', TaskController.getOne);
+router.get('/employee/:employeeId', TaskController.getByEmployee);
+
 router.put('/:id', TaskController.update);
 router.delete('/:id', TaskController.delete);
 
