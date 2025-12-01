@@ -16,7 +16,26 @@ export const TaskService = {
 
   // 🔑 NEW: find tasks by employeeId
   async getTasksByEmployeeId(employeeId: string) {
-    return await TaskModel.find({ employeeId }).populate('employeeId');
+    const tasks = await TaskModel.find({ employeeId }).populate("employeeId");
+
+    return tasks.map((task) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const obj: any = task.toObject();
+
+      // Safe check (in case createdAt is missing)
+      if (obj?.createdAt) {
+        const dayName = new Date(obj.createdAt).toLocaleDateString("en-US", {
+          weekday: "long",
+          timeZone: "Asia/Dhaka",
+        });
+
+        obj.day = dayName; // Add day field
+      } else {
+        obj.day = "Unknown";
+      }
+
+      return obj;
+    });
   },
 
   async updateTask(id: string, payload: Partial<ITask>) {

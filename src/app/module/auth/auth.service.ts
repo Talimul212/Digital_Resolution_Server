@@ -18,13 +18,21 @@ export const AuthService = {
       throw new Error('Invalid credentials');
     }
 
+
     const token = jwt.sign(
-      { userId: user._id, role: user.userType },
+      { id: user._id, role: user.userType },
       JWT_SECRET,
-      { expiresIn: '1d' },
+      { expiresIn: '1d' }
     );
 
-    return { token, user };
+    return {
+      token,
+      user: {
+        _id: user._id,
+        email: user.email,
+        userType: user.userType,
+      }
+    };
   },
 
   async validate(token: string) {
