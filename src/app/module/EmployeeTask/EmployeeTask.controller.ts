@@ -5,6 +5,8 @@ import { TaskService } from './EmployeeTask.service';
 export const TaskController = {
   async create(req: Request, res: Response) {
     try {
+      console.log(req.body);
+
       const task = await TaskService.createTask(req.body);
       res.status(201).json({ success: true, data: task });
     } catch (error) {
@@ -94,18 +96,18 @@ export const TaskController = {
       }
 
       // Convert BD dates to YYYY-MM-DD strings
-      const start = startDate.toISOString().split("T")[0];
-      const end = endDate.toISOString().split("T")[0];
+      const start = startDate.toISOString().split('T')[0];
+      const end = endDate.toISOString().split('T')[0];
 
-      const data = await TaskService.getEmployeeOverview(employeeId, start, end);
+      const data = await TaskService.getEmployeeOverview(
+        employeeId,
+        start,
+        end,
+      );
 
       res.json({ success: true, data });
-
     } catch (error) {
       res.status(500).json({ success: false, message: (error as any).message });
     }
-  }
-
-
-
+  },
 };
