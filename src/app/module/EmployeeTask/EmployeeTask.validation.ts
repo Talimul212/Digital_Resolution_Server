@@ -6,7 +6,7 @@ export const TaskZodSchema = z.object({
     'web_developer',
     'graphic_designer',
     'video_editor',
-    'marketor',
+    'marketer',
   ]),
   attendance: z.enum(['present', 'absent', 'leave']).default('present'),
 
