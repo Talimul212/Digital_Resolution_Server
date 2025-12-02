@@ -5,8 +5,6 @@ import { TaskService } from './EmployeeTask.service';
 export const TaskController = {
   async create(req: Request, res: Response) {
     try {
-      console.log(req.body);
-
       const task = await TaskService.createTask(req.body);
       res.status(201).json({ success: true, data: task });
     } catch (error) {
