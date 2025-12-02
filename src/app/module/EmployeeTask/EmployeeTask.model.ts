@@ -17,23 +17,21 @@ const TaskSchema = new Schema(
       enum: ['present', 'absent', 'leave'],
       default: 'present',
     },
-
-    // Developer
-    companyName: String,
+    hours:{ type: Number, required: true },
+    bdDate: { type: String, required: true },
+    companies:  {type: String, required: true },
     projectDetails: String,
+    
+    // Developer
     numberOfWebsites: Number,
-    hours: Number,
 
     // Graphic Designer
-    date: Date,
-    workDetails: String,
-    companies: [String],
     numberOfDesigns: Number,
 
     // Video Editor
     numberOfVideos: Number,
 
-    // Marketor
+    // marketer
     adsPlatform: String,
     numberOfPlatforms: Number,
   },
