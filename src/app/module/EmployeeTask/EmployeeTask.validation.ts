@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const TaskZodSchema = z.object({
+const BaseSchema = z.object({
   employeeId: z.string(),
   role: z.enum([
     'web_developer',
@@ -8,24 +8,44 @@ export const TaskZodSchema = z.object({
     'video_editor',
     'marketer',
   ]),
-  attendance: z.enum(['present', 'absent', 'leave']).default('present'),
 
   // Developer
   companyName: z.string().optional(),
+  attendance: z.enum(['present', 'absent', 'leave']).default('present'),
+  hours: z.number(),
+  bdDate: z.string().optional(),
+  companies: z.string(),
   projectDetails: z.string().optional(),
-  numberOfWebsites: z.number().optional(),
-  hours: z.number().optional(),
-
-  // Graphic Designer
-  date: z.string().optional(),
-  workDetails: z.string().optional(),
-  companies: z.array(z.string()).optional(),
-  numberOfDesigns: z.number().optional(),
-
-  // Video Editor
-  numberOfVideos: z.number().optional(),
-
-  // Marketor
-  adsPlatform: z.string().optional(),
-  numberOfPlatforms: z.number().optional(),
 });
+
+// ------------------ WEB DEVELOPER ------------------
+const WebDeveloperSchema = BaseSchema.extend({
+  role: z.literal('web_developer'),
+  numberOfWebsites: z.number(),
+});
+
+// ------------------ GRAPHIC DESIGNER ------------------
+const GraphicDesignerSchema = BaseSchema.extend({
+  role: z.literal('graphic_designer'),
+  numberOfDesigns: z.number(),
+});
+
+// ------------------ VIDEO EDITOR ------------------
+const VideoEditorSchema = BaseSchema.extend({
+  role: z.literal('video_editor'),
+  numberOfVideos: z.number(),
+});
+
+// ------------------ MARKETER ------------------
+const MarketerSchema = BaseSchema.extend({
+  role: z.literal('marketer'),
+  adsPlatform: z.string(),
+  numberOfPlatforms: z.number(),
+});
+
+export const TaskZodSchema = z.discriminatedUnion('role', [
+  WebDeveloperSchema,
+  GraphicDesignerSchema,
+  VideoEditorSchema,
+  MarketerSchema,
+]);
