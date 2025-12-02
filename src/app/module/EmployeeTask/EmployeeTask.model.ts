@@ -9,7 +9,7 @@ const TaskSchema = new Schema(
     },
     role: {
       type: String,
-      enum: ['web_developer', 'graphic_designer', 'video_editor', 'marketor'],
+      enum: ['web_developer', 'graphic_designer', 'video_editor', 'marketer'],
       required: true,
     },
     attendance: {
