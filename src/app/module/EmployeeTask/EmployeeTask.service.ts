@@ -14,7 +14,6 @@ export const TaskService = {
     return await TaskModel.findById(id).populate('employeeId');
   },
 
-  // 🔑 NEW: find tasks by employeeId
   async getTasksByEmployeeId(employeeId: string) {
     const tasks = await TaskModel.find({ employeeId }).populate("employeeId");
 
@@ -22,21 +21,40 @@ export const TaskService = {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const obj: any = task.toObject();
 
-      // Safe check (in case createdAt is missing)
-      if (obj?.createdAt) {
-        const dayName = new Date(obj.createdAt).toLocaleDateString("en-US", {
-          weekday: "long",
-          timeZone: "Asia/Dhaka",
-        });
+      if (obj.employeeId && obj.employeeId._id) {
+        obj.employeeId = obj.employeeId._id.toString();
+      }
 
-        obj.day = dayName; // Add day field
+      if (obj?.createdAt) {
+        const createdAtBD = new Date(
+          new Date(obj.createdAt).toLocaleString("en-US", {
+            timeZone: "Asia/Dhaka",
+          })
+        );
+
+
+        const nowBD = new Date(
+          new Date().toLocaleString("en-US", { timeZone: "Asia/Dhaka" })
+        );
+
+        const cutoffBD = new Date(createdAtBD);
+        cutoffBD.setHours(23, 59, 59, 999);
+
+        obj.editable = nowBD <= cutoffBD;
+
+        // Day name
+        obj.day = createdAtBD.toLocaleDateString("en-US", {
+          weekday: "long",
+        });
       } else {
         obj.day = "Unknown";
+        obj.editable = false;
       }
 
       return obj;
     });
   },
+
 
   async updateTask(id: string, payload: Partial<ITask>) {
     return await TaskModel.findByIdAndUpdate(id, payload, {
