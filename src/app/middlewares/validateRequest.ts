@@ -1,11 +1,11 @@
 /* eslint-disable */
 import { NextFunction, Request, Response } from 'express';
-import { ZodObject } from 'zod';
+import { ZodSchema } from 'zod';
 import catchAsync from '../utils/catchAsync';
 
-const validateRequest = (schema: ZodObject<any>) => {
+const validateRequest = (schema: ZodSchema<any>) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    await schema.parseAsync(req.body);
+    await schema.parseAsync(req.body);  
     next();
   });
 };
