@@ -10,5 +10,7 @@ router.get('/', TaskController.getAll);
 router.get('/employee/:employeeId', TaskController.getByEmployee);
 router.put('/:id', TaskController.update);
 router.delete('/:id', TaskController.delete);
+router.get('/overview/:employeeId', TaskController.getEmployeeOverview);
+
 
 export default router;

@@ -73,4 +73,39 @@ export const TaskController = {
       res.status(500).json({ success: false, message: (error as any).message });
     }
   },
+
+  async getEmployeeOverview(req: Request, res: Response) {
+    try {
+      const { employeeId } = req.params;
+      const { days, from, to } = req.query;
+
+      let startDate: Date;
+      let endDate = new Date();
+
+      if (from && to) {
+        startDate = new Date(from as string);
+        endDate = new Date(to as string);
+      } else if (days) {
+        startDate = new Date();
+        startDate.setDate(startDate.getDate() - Number(days));
+      } else {
+        startDate = new Date();
+        startDate.setDate(startDate.getDate() - 7);
+      }
+
+      // Convert BD dates to YYYY-MM-DD strings
+      const start = startDate.toISOString().split("T")[0];
+      const end = endDate.toISOString().split("T")[0];
+
+      const data = await TaskService.getEmployeeOverview(employeeId, start, end);
+
+      res.json({ success: true, data });
+
+    } catch (error) {
+      res.status(500).json({ success: false, message: (error as any).message });
+    }
+  }
+
+
+
 };
