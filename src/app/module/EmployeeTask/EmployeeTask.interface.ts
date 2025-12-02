@@ -2,7 +2,7 @@ export type AttendanceStatus = 'present' | 'absent' | 'leave';
 
 export interface BaseTask {
   employeeId: string; // reference to Employee
-  role: 'web_developer' | 'graphic_designer' | 'video_editor' | 'marketor';
+  role: 'web_developer' | 'graphic_designer' | 'video_editor' | 'marketer';
   attendance: AttendanceStatus;
 }
 
@@ -34,7 +34,7 @@ export interface VideoEditorTask extends BaseTask {
 }
 
 export interface MarketorTask extends BaseTask {
-  role: 'marketor';
+  role: 'marketer';
   date: Date;
   workDetails: string;
   company: string;

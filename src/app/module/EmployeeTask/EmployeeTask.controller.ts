@@ -94,18 +94,18 @@ export const TaskController = {
       }
 
       // Convert BD dates to YYYY-MM-DD strings
-      const start = startDate.toISOString().split("T")[0];
-      const end = endDate.toISOString().split("T")[0];
+      const start = startDate.toISOString().split('T')[0];
+      const end = endDate.toISOString().split('T')[0];
 
-      const data = await TaskService.getEmployeeOverview(employeeId, start, end);
+      const data = await TaskService.getEmployeeOverview(
+        employeeId,
+        start,
+        end,
+      );
 
       res.json({ success: true, data });
-
     } catch (error) {
       res.status(500).json({ success: false, message: (error as any).message });
     }
-  }
-
-
-
+  },
 };
