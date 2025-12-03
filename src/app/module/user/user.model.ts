@@ -10,7 +10,7 @@ const UserSchema = new Schema<IUser>(
     userType: {
       type: String,
       enum: [
-        'suber_admin',
+        'super_admin',
         'marketer',
         'web_developer',
         'graphic_designer',
