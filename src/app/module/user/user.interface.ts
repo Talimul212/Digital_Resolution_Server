@@ -1,5 +1,5 @@
 export type UserType =
-  | 'suber_admin'
+  | 'super_admin'
   | 'marketer'
   | 'web_developer'
   | 'graphic_designer'

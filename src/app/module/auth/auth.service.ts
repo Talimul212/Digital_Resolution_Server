@@ -17,13 +17,11 @@ export const AuthService = {
     if (user.password !== password) {
       throw new Error('Invalid credentials');
     }
+    console.log(user);
 
-
-    const token = jwt.sign(
-      { id: user._id, role: user.userType },
-      JWT_SECRET,
-      { expiresIn: '1d' }
-    );
+    const token = jwt.sign({ id: user._id, role: user.userType }, JWT_SECRET, {
+      expiresIn: '1d',
+    });
 
     return {
       token,
@@ -31,7 +29,9 @@ export const AuthService = {
         _id: user._id,
         email: user.email,
         userType: user.userType,
-      }
+        employeeId: user.employeeId,
+        name: user.name,
+      },
     };
   },
 
