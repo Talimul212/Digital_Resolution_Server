@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from 'express';
-import { TaskService } from './EmployeeTask.service';
+import { Request, Response } from "express";
+import { TaskService } from "./EmployeeTask.service";
 
 export const TaskController = {
   async create(req: Request, res: Response) {
@@ -25,9 +25,7 @@ export const TaskController = {
     try {
       const task = await TaskService.getTaskById(req.params.id);
       if (!task) {
-        return res
-          .status(404)
-          .json({ success: false, message: 'Task not found' });
+        return res.status(404).json({ success: false, message: "Task not found" });
       }
       res.json({ success: true, data: task });
     } catch (error) {
@@ -35,7 +33,6 @@ export const TaskController = {
     }
   },
 
-  // 🔑 NEW: Get tasks by employeeId
   async getByEmployee(req: Request, res: Response) {
     try {
       const { employeeId } = req.params;
@@ -54,7 +51,7 @@ export const TaskController = {
           .status(404)
           .json({ success: false, message: 'Task not found' });
       }
-      res.json({ success: true, data: task });
+       res.json({ success: "Data Updated ",  data: task });
     } catch (error) {
       res.status(500).json({ success: false, message: (error as any).message });
     }
@@ -64,11 +61,9 @@ export const TaskController = {
     try {
       const deleted = await TaskService.deleteTask(req.params.id);
       if (!deleted) {
-        return res
-          .status(404)
-          .json({ success: false, message: 'Task not found' });
+        return res.status(404).json({ success: false, message: "Task not found" });
       }
-      res.json({ success: true, message: 'Task deleted' });
+      res.json({ success: true, message: "Task deleted" });
     } catch (error) {
       res.status(500).json({ success: false, message: (error as any).message });
     }
@@ -93,16 +88,21 @@ export const TaskController = {
         startDate.setDate(startDate.getDate() - 7);
       }
 
-      // Convert BD dates to YYYY-MM-DD strings
-      const start = startDate.toISOString().split('T')[0];
-      const end = endDate.toISOString().split('T')[0];
+      const start = startDate.toISOString().split("T")[0];
+      const end = endDate.toISOString().split("T")[0];
 
-      const data = await TaskService.getEmployeeOverview(
-        employeeId,
-        start,
-        end,
-      );
+      const data = await TaskService.getEmployeeOverview(employeeId, start, end);
 
+      res.json({ success: true, data });
+    } catch (error) {
+      res.status(500).json({ success: false, message: (error as any).message });
+    }
+  },
+
+  async getEmployeeFullAttendance(req: Request, res: Response) {
+    try {
+      const { employeeId } = req.params;
+      const data = await TaskService.getEmployeeFullAttendance(employeeId);
       res.json({ success: true, data });
     } catch (error) {
       res.status(500).json({ success: false, message: (error as any).message });

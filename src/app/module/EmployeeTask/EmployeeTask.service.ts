@@ -1,148 +1,223 @@
-import { ITask } from './EmployeeTask.interface';
-import { TaskModel } from './EmployeeTask.model';
+import { EmployeeModel } from "../employee/employee.model";
+import { LeaveModel } from "../EmployeeAttandance/EmployeeLeave.model";
+import { ITask } from "./EmployeeTask.interface";
+import { TaskModel } from "./EmployeeTask.model";
+
+const toBDDate = (date: Date) =>
+  new Date(date.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }))
+    .toISOString()
+    .split("T")[0];
 
 export const TaskService = {
   async createTask(payload: ITask) {
-
-    const nowBD = new Date(
-      new Date().toLocaleString("en-US", { timeZone: "Asia/Dhaka" })
-    );
-
-    const bdDate = nowBD.toISOString().split("T")[0]; // "2025-12-02"
-
+    const bdDate = toBDDate(new Date());
 
     const exists = await TaskModel.findOne({
       employeeId: payload.employeeId,
-      bdDate: bdDate,
-    });
-
-    if (exists) {
-      throw new Error("This employee already submitted today's task.");
-    }
-
-    // Save task with BD date
-    return await TaskModel.create({
-      ...payload,
       bdDate,
     });
+
+    if (exists) throw new Error("This employee already submitted today's task.");
+
+    return TaskModel.create({ ...payload, bdDate });
   },
 
   async getTasks() {
-    return await TaskModel.find().populate('employeeId');
+    return TaskModel.find().populate("employeeId");
   },
 
   async getTaskById(id: string) {
-    return await TaskModel.findById(id).populate('employeeId');
+    return TaskModel.findById(id).populate("employeeId");
   },
 
   async getTasksByEmployeeId(employeeId: string) {
     const tasks = await TaskModel.find({ employeeId }).populate("employeeId");
 
-    return tasks.map((task) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const obj: any = task.toObject();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return tasks.map((task: any) => {
+      const obj = task.toObject();
 
-      if (obj.employeeId && obj.employeeId._id) {
-        obj.employeeId = obj.employeeId._id.toString();
-      }
+      if (obj.employeeId?._id) obj.employeeId = obj.employeeId._id.toString();
 
-      if (obj?.createdAt) {
-        const createdAtBD = new Date(
-          new Date(obj.createdAt).toLocaleString("en-US", {
-            timeZone: "Asia/Dhaka",
-          })
-        );
+      const createdBD = toBDDate(new Date(obj.createdAt));
+      const nowBD = toBDDate(new Date());
 
+      obj.editable = createdBD === nowBD;
 
-        const nowBD = new Date(
-          new Date().toLocaleString("en-US", { timeZone: "Asia/Dhaka" })
-        );
-
-        const cutoffBD = new Date(createdAtBD);
-        cutoffBD.setHours(23, 59, 59, 999);
-
-        obj.editable = nowBD <= cutoffBD;
-
-        // Day name
-        obj.day = createdAtBD.toLocaleDateString("en-US", {
-          weekday: "long",
-        });
-      } else {
-        obj.day = "Unknown";
-        obj.editable = false;
-      }
+      obj.day = new Date(obj.createdAt).toLocaleDateString("en-US", {
+        weekday: "long",
+      });
 
       return obj;
     });
   },
 
-
   async updateTask(id: string, payload: Partial<ITask>) {
     return await TaskModel.findByIdAndUpdate(id, payload, {
       new: true,
-    }).populate('employeeId');
+    });
   },
 
+
   async deleteTask(id: string) {
-    return await TaskModel.findByIdAndDelete(id);
+    return TaskModel.findByIdAndDelete(id);
   },
 
   async getEmployeeOverview(employeeId: string, start: string, end: string) {
+
+    const employee = await EmployeeModel.findById(employeeId);
+    if (!employee) throw new Error("Employee not found");
+
+    const joiningDate = new Date(employee.joiningDate);
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+
+    const effectiveStart = startDate < joiningDate ? joiningDate : startDate;
+
+    const startBD = toBDDate(effectiveStart);
+    const endBD = toBDDate(endDate);
+
     const tasks = await TaskModel.find({
       employeeId,
-      bdDate: { $gte: start, $lte: end } 
+      bdDate: { $gte: startBD, $lte: endBD },
     });
 
-    let present = 0;
-    let absent = 0;
-    let leave = 0;
+    const presentDays = new Set(tasks.map(t => t.bdDate));
 
-    let totalHours = 0;
-    let hoursCount = 0;
+    const leaveRanges = await LeaveModel.find({
+      employeeId,
+      fromDate: { $lte: endBD },
+      toDate: { $gte: startBD },
+    });
 
-    let totalDesigns = 0;
-    let totalVideos = 0;
-    let totalAds = 0;
+    const leaveDays = new Set<string>();
 
-    tasks.forEach(task => {
-      if (task.attendance === "present") present++;
-      if (task.attendance === "absent") absent++;
-      if (task.attendance === "leave") leave++;
+    leaveRanges.forEach(range => {
+      // eslint-disable-next-line prefer-const
+      let dayPointer = new Date(range.fromDate);
+      const last = new Date(range.toDate);
 
-      if (typeof task.hours === "number") {
-        totalHours += task.hours;
-        hoursCount++;
+      while (dayPointer <= last) {
+        const bd = toBDDate(dayPointer);
+
+        if (bd >= startBD && bd <= endBD && new Date(bd) >= joiningDate) {
+          leaveDays.add(bd);
+        }
+
+        dayPointer.setDate(dayPointer.getDate() + 1);
       }
 
-      if (task.role === "graphic_designer" && task.numberOfDesigns) {
-        totalDesigns += task.numberOfDesigns;
-      }
+    });
 
-      if (task.role === "video_editor" && task.numberOfVideos) {
-        totalVideos += task.numberOfVideos;
-      }
+    const allDays: string[] = [];
+    const cursor = new Date(effectiveStart);
 
-      if (task.role === "marketer" && task.numberOfPlatforms) {
-        totalAds += task.numberOfPlatforms;
-      }
+    while (cursor <= endDate) {
+      allDays.push(toBDDate(cursor));
+      cursor.setDate(cursor.getDate() + 1);
+    }
+
+    let present = 0, leave = 0, absent = 0;
+
+    allDays.forEach(day => {
+      if (presentDays.has(day)) present++;
+      else if (leaveDays.has(day)) leave++;
+      else absent++;
     });
 
     return {
-      range: { start, end },
-      summary: {
-        present,
-        absent,
-        leave,
-        averageHours: hoursCount > 0 ? totalHours / hoursCount : 0,
-        totalDesigns,
-        totalVideos,
-        totalAds
+      employee: {
+        id: employee._id,
+        name: employee.name,
+        designation: employee.designation,
+        joiningDate: toBDDate(joiningDate)
+      },
+      range: { start: startBD, end: endBD },
+      summary: { totalDays: allDays.length, present, leave, absent },
+      detailed: {
+        presentDays: Array.from(presentDays),
+        leaveDays: Array.from(leaveDays),
+        absentDays: allDays.filter(d => !presentDays.has(d) && !leaveDays.has(d))
       }
     };
-  }
+  },
 
 
+  async getEmployeeFullAttendance(employeeId: string) {
+    const employee = await EmployeeModel.findById(employeeId);
+    if (!employee) throw new Error("Employee not found");
 
+    const joining = new Date(employee.joiningDate);
+    const today = new Date();
 
+    const start = toBDDate(joining);
+    const end = toBDDate(today);
 
+    const tasks = await TaskModel.find({
+      employeeId,
+      bdDate: { $gte: start, $lte: end },
+    });
+
+    const presentDays = new Set(tasks.map((t) => t.bdDate));
+
+    const leaveRanges = await LeaveModel.find({
+      employeeId,
+      fromDate: { $lte: end },
+      toDate: { $gte: start },
+    });
+
+    const leaveDays = new Set<string>();
+
+    leaveRanges.forEach((range) => {
+      const current = new Date(range.fromDate);
+      const last = new Date(range.toDate);
+
+      while (current <= last) {
+        const bd = toBDDate(current);
+        if (new Date(bd) >= joining) leaveDays.add(bd);
+        current.setDate(current.getDate() + 1);
+      }
+    });
+
+    const allDays: string[] = [];
+    const cursor = new Date(joining);
+
+    while (cursor <= today) {
+      allDays.push(toBDDate(cursor));
+      cursor.setDate(cursor.getDate() + 1);
+    }
+
+    let present = 0,
+      leave = 0,
+      absent = 0;
+
+    for (const day of allDays) {
+      if (presentDays.has(day)) present++;
+      else if (leaveDays.has(day)) leave++;
+      else absent++;
+    }
+
+    return {
+      employee: {
+        id: employee._id,
+        name: employee.name,
+        designation: employee.designation,
+        department: employee.department,
+        joiningDate: start,
+      },
+      attendanceSummary: {
+        totalDays: allDays.length,
+        present,
+        leave,
+        absent,
+      },
+      detailedDays: {
+        presentDays: Array.from(presentDays),
+        leaveDays: Array.from(leaveDays),
+        absentDays: allDays.filter(
+          (d) => !presentDays.has(d) && !leaveDays.has(d)
+        ),
+      },
+    };
+  },
 };
