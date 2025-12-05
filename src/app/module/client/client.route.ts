@@ -11,8 +11,8 @@ router.post(
   ClientController.create,
 );
 router.get('/', ClientController.getAll);
-router.put('/:id/update', ClientController.update);
-router.delete('/:id/delete', ClientController.delete);
+router.put('/update/:id', ClientController.update);
+router.delete('/:id', ClientController.delete);
 router.get('/:id', ClientController.getById);
 
 export default router;

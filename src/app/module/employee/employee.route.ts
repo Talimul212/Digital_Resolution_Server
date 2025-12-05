@@ -12,7 +12,7 @@ router.post(
 );
 router.get('/', EmployeeController.getAll);
 router.get('/:id', EmployeeController.getById);
-router.put('/:id', EmployeeController.update);
+router.put('/update/:id', EmployeeController.update);
 router.delete('/:id', EmployeeController.delete);
 
 export default router;
