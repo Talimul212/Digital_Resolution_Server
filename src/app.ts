@@ -16,7 +16,7 @@ app.use(
   cors({
     origin: [
       'http://localhost:3000',
-      'https://digital-resolution-management-syste-tau.vercel.app',
+      'https://digital-resolution-management-syste-gilt.vercel.app',
     ],
     credentials: true, // if you need cookies/auth headers
   }),
