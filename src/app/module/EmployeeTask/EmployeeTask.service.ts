@@ -1,12 +1,12 @@
-import { EmployeeModel } from "../employee/employee.model";
-import { LeaveModel } from "../EmployeeAttandance/EmployeeLeave.model";
-import { ITask } from "./EmployeeTask.interface";
-import { TaskModel } from "./EmployeeTask.model";
+import { EmployeeModel } from '../employee/employee.model';
+import { LeaveModel } from '../EmployeeAttandance/EmployeeLeave.model';
+import { ITask } from './EmployeeTask.interface';
+import { TaskModel } from './EmployeeTask.model';
 
 const toBDDate = (date: Date) =>
-  new Date(date.toLocaleString("en-US", { timeZone: "Asia/Dhaka" }))
+  new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Dhaka' }))
     .toISOString()
-    .split("T")[0];
+    .split('T')[0];
 
 export const TaskService = {
   async createTask(payload: ITask) {
@@ -17,21 +17,22 @@ export const TaskService = {
       bdDate,
     });
 
-    if (exists) throw new Error("This employee already submitted today's task.");
+    if (exists)
+      throw new Error("This employee already submitted today's task.");
 
     return TaskModel.create({ ...payload, bdDate });
   },
 
   async getTasks() {
-    return TaskModel.find().populate("employeeId");
+    return TaskModel.find().populate('employeeId');
   },
 
   async getTaskById(id: string) {
-    return TaskModel.findById(id).populate("employeeId");
+    return TaskModel.findById(id).populate('employeeId');
   },
 
   async getTasksByEmployeeId(employeeId: string) {
-    const tasks = await TaskModel.find({ employeeId }).populate("employeeId");
+    const tasks = await TaskModel.find({ employeeId }).populate('employeeId');
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return tasks.map((task: any) => {
@@ -44,8 +45,8 @@ export const TaskService = {
 
       obj.editable = createdBD === nowBD;
 
-      obj.day = new Date(obj.createdAt).toLocaleDateString("en-US", {
-        weekday: "long",
+      obj.day = new Date(obj.createdAt).toLocaleDateString('en-US', {
+        weekday: 'long',
       });
 
       return obj;
@@ -58,15 +59,13 @@ export const TaskService = {
     });
   },
 
-
   async deleteTask(id: string) {
     return TaskModel.findByIdAndDelete(id);
   },
 
   async getEmployeeOverview(employeeId: string, start: string, end: string) {
-
     const employee = await EmployeeModel.findById(employeeId);
-    if (!employee) throw new Error("Employee not found");
+    if (!employee) throw new Error('Employee not found');
 
     const joiningDate = new Date(employee.joiningDate);
     const startDate = new Date(start);
@@ -82,7 +81,7 @@ export const TaskService = {
       bdDate: { $gte: startBD, $lte: endBD },
     });
 
-    const presentDays = new Set(tasks.map(t => t.bdDate));
+    const presentDays = new Set(tasks.map((t) => t.bdDate));
 
     const leaveRanges = await LeaveModel.find({
       employeeId,
@@ -92,7 +91,7 @@ export const TaskService = {
 
     const leaveDays = new Set<string>();
 
-    leaveRanges.forEach(range => {
+    leaveRanges.forEach((range) => {
       // eslint-disable-next-line prefer-const
       let dayPointer = new Date(range.fromDate);
       const last = new Date(range.toDate);
@@ -106,7 +105,6 @@ export const TaskService = {
 
         dayPointer.setDate(dayPointer.getDate() + 1);
       }
-
     });
 
     const allDays: string[] = [];
@@ -117,35 +115,45 @@ export const TaskService = {
       cursor.setDate(cursor.getDate() + 1);
     }
 
-    let present = 0, leave = 0, absent = 0;
+    let present = 0,
+      leave = 0,
+      absent = 0;
 
-    allDays.forEach(day => {
+    const totalHours = tasks.reduce((sum, t) => sum + t.hours, 0);
+    allDays.forEach((day) => {
       if (presentDays.has(day)) present++;
       else if (leaveDays.has(day)) leave++;
       else absent++;
     });
-
     return {
       employee: {
         id: employee._id,
         name: employee.name,
         designation: employee.designation,
-        joiningDate: toBDDate(joiningDate)
+        joiningDate: toBDDate(joiningDate),
       },
       range: { start: startBD, end: endBD },
-      summary: { totalDays: allDays.length, present, leave, absent },
+      summary: {
+        totalDays: allDays.length,
+        totalHours,
+        present,
+        leave,
+        absent,
+      },
+
       detailed: {
         presentDays: Array.from(presentDays),
         leaveDays: Array.from(leaveDays),
-        absentDays: allDays.filter(d => !presentDays.has(d) && !leaveDays.has(d))
-      }
+        absentDays: allDays.filter(
+          (d) => !presentDays.has(d) && !leaveDays.has(d),
+        ),
+      },
     };
   },
 
-
   async getEmployeeFullAttendance(employeeId: string) {
     const employee = await EmployeeModel.findById(employeeId);
-    if (!employee) throw new Error("Employee not found");
+    if (!employee) throw new Error('Employee not found');
 
     const joining = new Date(employee.joiningDate);
     const today = new Date();
@@ -215,7 +223,7 @@ export const TaskService = {
         presentDays: Array.from(presentDays),
         leaveDays: Array.from(leaveDays),
         absentDays: allDays.filter(
-          (d) => !presentDays.has(d) && !leaveDays.has(d)
+          (d) => !presentDays.has(d) && !leaveDays.has(d),
         ),
       },
     };
