@@ -129,30 +129,24 @@ export const TaskService = {
 
     // Role-specific totals
     let roleSummary: Record<string, number> = {};
-    if (employee.department === 'web_developer') {
-      const totalWebsites = tasks.reduce(
-        (sum, t) => sum + (t.numberOfWebsites || 0),
+    // Map department → { fieldName, summaryKey }
+    const roleFieldMap: Record<
+      string,
+      { field: keyof (typeof tasks)[0]; key: string }
+    > = {
+      web_developer: { field: 'numberOfWebsites', key: 'totalWebsites' },
+      graphic_designer: { field: 'numberOfDesigns', key: 'totalDesigns' },
+      video_editor: { field: 'numberOfVideos', key: 'totalVideos' },
+      marketer: { field: 'numberOfPlatforms', key: 'totalAds' },
+    };
+
+    const roleConfig = roleFieldMap[employee.department];
+    if (roleConfig) {
+      const total = tasks.reduce(
+        (sum, t) => sum + (t[roleConfig.field] || 0),
         0,
       );
-      roleSummary = { totalWebsites };
-    } else if (employee.department === 'graphic_designer') {
-      const totalDesigns = tasks.reduce(
-        (sum, t) => sum + (t.numberOfDesigns || 0),
-        0,
-      );
-      roleSummary = { totalDesigns };
-    } else if (employee.department === 'video_editor') {
-      const totalVideos = tasks.reduce(
-        (sum, t) => sum + (t.numberOfVideos || 0),
-        0,
-      );
-      roleSummary = { totalVideos };
-    } else if (employee.department === 'marketer') {
-      const totalAds = tasks.reduce(
-        (sum, t) => sum + (t.numberOfPlatforms || 0),
-        0,
-      );
-      roleSummary = { totalAds };
+      roleSummary = { [roleConfig.key]: total };
     }
 
     return {
