@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import { EmployeeModel } from '../employee/employee.model';
 import { LeaveModel } from '../EmployeeAttandance/EmployeeLeave.model';
 import { ITask } from './EmployeeTask.interface';
@@ -92,7 +93,6 @@ export const TaskService = {
     const leaveDays = new Set<string>();
 
     leaveRanges.forEach((range) => {
-      // eslint-disable-next-line prefer-const
       let dayPointer = new Date(range.fromDate);
       const last = new Date(range.toDate);
 
@@ -119,12 +119,42 @@ export const TaskService = {
       leave = 0,
       absent = 0;
 
-    const totalHours = tasks.reduce((sum, t) => sum + t.hours, 0);
+    const totalHours = tasks.reduce((sum, t) => sum + (t.hours || 0), 0);
+
     allDays.forEach((day) => {
       if (presentDays.has(day)) present++;
       else if (leaveDays.has(day)) leave++;
       else absent++;
     });
+
+    // Role-specific totals
+    let roleSummary: Record<string, number> = {};
+    if (employee.department === 'web_developer') {
+      const totalWebsites = tasks.reduce(
+        (sum, t) => sum + (t.numberOfWebsites || 0),
+        0,
+      );
+      roleSummary = { totalWebsites };
+    } else if (employee.department === 'graphic_designer') {
+      const totalDesigns = tasks.reduce(
+        (sum, t) => sum + (t.numberOfDesigns || 0),
+        0,
+      );
+      roleSummary = { totalDesigns };
+    } else if (employee.department === 'video_editor') {
+      const totalVideos = tasks.reduce(
+        (sum, t) => sum + (t.numberOfVideos || 0),
+        0,
+      );
+      roleSummary = { totalVideos };
+    } else if (employee.department === 'marketer') {
+      const totalAds = tasks.reduce(
+        (sum, t) => sum + (t.numberOfPlatforms || 0),
+        0,
+      );
+      roleSummary = { totalAds };
+    }
+
     return {
       employee: {
         id: employee._id,
@@ -139,8 +169,8 @@ export const TaskService = {
         present,
         leave,
         absent,
+        ...roleSummary,
       },
-
       detailed: {
         presentDays: Array.from(presentDays),
         leaveDays: Array.from(leaveDays),
