@@ -54,4 +54,17 @@ export const DepartmentController = {
       });
     }
   },
+  async getOverview(req: Request, res: Response) {
+    try {
+      const overview = await DepartmentService.getOverviewByDepartmentId(
+        req.params.id,
+      );
+      res.status(200).json({ success: true, data: overview });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: `Internal server error: ${(error as Error).message}`,
+      });
+    }
+  },
 };

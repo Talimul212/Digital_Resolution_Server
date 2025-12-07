@@ -21,5 +21,5 @@ router.put(
   DepartmentController.update,
 );
 router.delete('/:id', DepartmentController.delete);
-
+router.get('/overview/:id', DepartmentController.getOverview);
 export default router;
