@@ -61,7 +61,7 @@ export const DepartmentService = {
       { $match: { role } },
       {
         $group: {
-          _id: { $week: '$createdAt' },
+          _id: { $isoWeek: '$createdAt' },
           totalHours: { $sum: '$hours' },
         },
       },

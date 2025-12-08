@@ -6,6 +6,7 @@ import ClientRoutes from '../module/client/client.route';
 import EmployeeRoutes from '../module/employee/employee.route';
 import EmployeeTaskRoutes from '../module/EmployeeTask/EmployeeTask.route';
 import EmployeeLeaveRoutes from '../module/EmployeeAttandance/EmployeeLeave.route';
+import AdminRoutes from '../module/admin/admin.route';
 
 interface IModuleRoute {
   path: string;
@@ -28,6 +29,10 @@ const moduleRoutes: IModuleRoute[] = [
     route: DepartmentRoutes,
   },
   {
+    path: '/admin',
+    route: AdminRoutes,
+  },
+  {
     path: '/clients',
     route: ClientRoutes,
   },
@@ -40,7 +45,7 @@ const moduleRoutes: IModuleRoute[] = [
     route: EmployeeTaskRoutes,
   },
   {
-    path: '/leave',           
+    path: '/leave',
     route: EmployeeLeaveRoutes,
   },
 ];
