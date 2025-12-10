@@ -35,8 +35,6 @@ export const DepartmentController = {
   },
 
   async getEmployees(req: Request, res: Response) {
-    console.log(req.params);
-
     try {
       const employees = await DepartmentService.getEmployeesByDepartmentName(
         req.params.id,
